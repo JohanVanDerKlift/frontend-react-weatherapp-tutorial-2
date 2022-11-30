@@ -1,24 +1,33 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import './App.css';
 import SearchBar from './components/searchBar/SearchBar';
 import TabBarMenu from './components/tabBarMenu/TabBarMenu';
 import MetricSlider from './components/metricSlider/MetricSlider';
 import axios from "axios";
+import ForecastTab from "./pages/forecastTab/ForecastTab";
 
 const apiKey = '73c57ea6d7d190039dd9820a17d06ee1';
 
 function App() {
   const [weatherData, setWeatherData] = useState({});
+  const [location, setLocation] = useState("");
 
-  async function fetchData() {
-    try {
-      const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=utrecht,nl&appid=${apiKey}&lang=nl`);
-      console.log(result.data);
-      setWeatherData(result.data);
-    } catch (e) {
-      console.error(e);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location},nl&appid=${apiKey}&lang=nl`);
+        console.log(result.data);
+        setWeatherData(result.data);
+      } catch (e) {
+        console.error(e);
+      }
     }
-  }
+
+    if (location){
+      fetchData();
+    }
+
+  }, [location])
 
   return (
     <>
@@ -26,7 +35,7 @@ function App() {
 
         {/*HEADER -------------------- */}
         <div className="weather-header">
-          <SearchBar/>
+          <SearchBar setLocationHandler={setLocation}/>
 
           <span className="location-details">
             {Object.keys(weatherData).length > 0 &&
@@ -36,12 +45,6 @@ function App() {
               <h1>{weatherData.main.temp}</h1>
             </>
             }
-            <button
-              type="button"
-              onClick={fetchData}
-            >
-              Haal data op!
-            </button>
           </span>
         </div>
 
@@ -50,7 +53,7 @@ function App() {
           <TabBarMenu/>
 
           <div className="tab-wrapper">
-            Alle inhoud van de tabbladen komt hier!
+            <ForecastTab coordinates={weatherData.coord}/>
           </div>
         </div>
 
