@@ -42,7 +42,7 @@ function App() {
             <>
               <h2>{weatherData.weather[0].description}</h2>
               <h3>{weatherData.name}</h3>
-              <h1>{weatherData.main.temp}</h1>
+              <h1>{weatherData.main.temp}&deg; C</h1>
             </>
             }
           </span>

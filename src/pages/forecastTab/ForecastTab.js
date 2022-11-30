@@ -4,18 +4,23 @@ import axios from "axios";
 
 const apiKey = '73c57ea6d7d190039dd9820a17d06ee1';
 
+function createDateString(timestamp) {
+  const day = new Date(timestamp * 1000);
+  return day.toLocaleDateString('nl-NL', { weekday: 'long' });
+}
+
 function ForecastTab({coordinates}) {
-  const [forecast, setForecast] = useState([]);
-  console.log(coordinates);
+  const [forecasts, setForecasts] = useState([]);
 
   useEffect(() => {
     async function fetchForecasts() {
       try {
-        // const result = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?
-        //   lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}&lang=nl`);
-        const result = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=44.34&lon=10.99&appid=${apiKey}&lang=nl`);
+        const result = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}&lang=nl`);
         console.log(result.data);
-        setForecast(result.data);
+        const fiveDayForecast = result.data.list.filter((singleForecast) => {
+          return singleForecast.dt_txt.includes("12:00:00");
+        })
+        setForecasts(fiveDayForecast);
       } catch (e) {
         console.error(e);
       }
@@ -28,80 +33,24 @@ function ForecastTab({coordinates}) {
 
   return (
     <div className="tab-wrapper">
-      <article className="forecast-day">
-        <p className="day-description">
-          Maandag
-        </p>
+      {forecasts.map((forecast) => {
+        return (
+          <article className="forecast-day" key={forecast.dt}>
+            <p className="day-description">
+              {createDateString(forecast.dt)}
+            </p>
 
-        <section className="forecast-weather">
+            <section className="forecast-weather">
             <span>
-              12&deg; C
+              {forecast.main.temp}&deg; C
             </span>
-          <span className="weather-description">
-              Licht Bewolkt
+              <span className="weather-description">
+              {forecast.weather[0].description}
             </span>
-        </section>
-      </article>
-
-      <article className="forecast-day">
-        <p className="day-description">
-          Maandag
-        </p>
-
-        <section className="forecast-weather">
-            <span>
-              12&deg; C
-            </span>
-          <span className="weather-description">
-              Licht Bewolkt
-            </span>
-        </section>
-      </article>
-
-      <article className="forecast-day">
-        <p className="day-description">
-          Maandag
-        </p>
-
-        <section className="forecast-weather">
-            <span>
-              12&deg; C
-            </span>
-          <span className="weather-description">
-              Licht Bewolkt
-            </span>
-        </section>
-      </article>
-
-      <article className="forecast-day">
-        <p className="day-description">
-          Maandag
-        </p>
-
-        <section className="forecast-weather">
-            <span>
-              12&deg; C
-            </span>
-          <span className="weather-description">
-              Licht Bewolkt
-            </span>
-        </section>
-      </article>
-
-      <article className="forecast-day">
-        <p className="day-description">
-          Maandag
-        </p>
-
-        <section className="forecast-weather">
-            <span>
-              12&deg; C
-            </span>
-          <span className="weather-description">
-              Licht Bewolkt
-            </span>
-        </section>
-      </article>
+            </section>
+          </article>
+        )
+      })}
     </div>
   );
 }
