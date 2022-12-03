@@ -1,22 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import './ForecastTab.css';
 import axios from "axios";
+import kelvinToCelsius from "../../helpers/kelvinToCelsius";
+import createDateString from "../../helpers/createDateString";
 
 const apiKey = '73c57ea6d7d190039dd9820a17d06ee1';
-
-function createDateString(timestamp) {
-  const day = new Date(timestamp * 1000);
-  return day.toLocaleDateString('nl-NL', { weekday: 'long' });
-}
 
 function ForecastTab({coordinates}) {
   const [forecasts, setForecasts] = useState([]);
   const [error, toggleError] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, toggleLoading] = useState(false);
 
   useEffect(() => {
     async function fetchForecasts() {
-      setLoading(true);
+      toggleLoading(true);
       try {
         toggleError(false);
         const result = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}&lang=nl`);
@@ -28,9 +25,8 @@ function ForecastTab({coordinates}) {
       } catch (e) {
         console.error(e);
         toggleError(true);
-        console.log(error);
       }
-      setLoading(false);
+      toggleLoading(false);
     }
 
     if (coordinates) {
@@ -54,7 +50,7 @@ function ForecastTab({coordinates}) {
 
             <section className="forecast-weather">
             <span>
-              {forecast.main.temp}&deg; C
+              {kelvinToCelsius(forecast.main.temp)}
             </span>
               <span className="weather-description">
               {forecast.weather[0].description}

@@ -5,6 +5,9 @@ import TabBarMenu from './components/tabBarMenu/TabBarMenu';
 import MetricSlider from './components/metricSlider/MetricSlider';
 import axios from "axios";
 import ForecastTab from "./pages/forecastTab/ForecastTab";
+import {Routes, Route} from "react-router-dom";
+import TodayTab from "./pages/todayTab/TodayTab";
+import kelvinToCelsius from "./helpers/kelvinToCelsius";
 
 const apiKey = '73c57ea6d7d190039dd9820a17d06ee1';
 
@@ -45,11 +48,11 @@ function App() {
 
           <span className="location-details">
             {Object.keys(weatherData).length > 0 &&
-            <>
-              <h2>{weatherData.weather[0].description}</h2>
-              <h3>{weatherData.name}</h3>
-              <h1>{weatherData.main.temp}&deg; C</h1>
-            </>
+              <>
+                <h2>{weatherData.weather[0].description}</h2>
+                <h3>{weatherData.name}</h3>
+                <h1>{kelvinToCelsius(weatherData.main.temp)}</h1>
+              </>
             }
           </span>
         </div>
@@ -57,12 +60,14 @@ function App() {
         {/*CONTENT ------------------ */}
         <div className="weather-content">
           <TabBarMenu/>
-
           <div className="tab-wrapper">
-            <ForecastTab coordinates={weatherData.coord}/>
+            <Routes>
+              <Route path="komende-week" element={<ForecastTab coordinates={weatherData.coord}/>}/>
+              <Route path="/" element={<TodayTab coordinates={weatherData.coord}/>}/>
+            </Routes>
           </div>
-        </div>
 
+        </div>
         <MetricSlider/>
       </div>
     </>
