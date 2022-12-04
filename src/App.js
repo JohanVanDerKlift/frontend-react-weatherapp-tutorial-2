@@ -9,8 +9,6 @@ import {Routes, Route} from "react-router-dom";
 import TodayTab from "./pages/todayTab/TodayTab";
 import kelvinToCelsius from "./helpers/kelvinToCelsius";
 
-const apiKey = '73c57ea6d7d190039dd9820a17d06ee1';
-
 function App() {
   const [weatherData, setWeatherData] = useState({});
   const [location, setLocation] = useState("");
@@ -20,7 +18,7 @@ function App() {
     async function fetchData() {
       toggleError(false);
       try {
-        const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location},nl&appid=${apiKey}&lang=nl`);
+        const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location},nl&appid=${process.env.REACT_APP_API_KEY}&lang=nl`);
         console.log(result.data);
         setWeatherData(result.data);
       } catch (e) {
